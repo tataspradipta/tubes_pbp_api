@@ -139,22 +139,49 @@ class Pelanggan extends ResourceController
      *
      * @return mixed
      */
-    public function update($username = null)
+    public function update($id= null)
     {
         $model = new ModelPelanggan();
+
         $data = [
-            'username' => $this->request->getVar("usename"), 
-            'nama' => $this->request->getVar("nama"), 
-            'email' => $this->request->getVar("email"), 
+            'username' => $this->request->getVar("username"),
+            'nama' => $this->request->getVar("nama"),
+            'email' => $this->request->getVar("email"),
             'tanggalLahir' => $this->request->getVar("tanggalLahir"),
             'noTelp' => $this->request->getVar("noTelp"),
         ];
-        $data = $this->request->getRawInput();
-        $model->update($username, $data);
-        $response = [
-            'status' => 200, 'error' => null, 'message' => "Data Anda $username berhasil dibaharukan"
-        ];
-        return $this->respond($response);
+
+        $validation = \Config\Services::validation();
+
+        $valid = $this->validate([
+            'username' => [
+                'rules' => 'is_unique[pelanggan.username]',
+                'label' => 'Username Pelanggan',
+                'errors' => [
+                    'is_uniqe' => "{field} sudah ada"
+                ]
+            ]
+        ]);
+
+        if (!$valid) {
+            $response = [
+                'status' => 404,
+                'error' => true,
+                'message' => $validation->getError("username"),
+            ];
+
+            return $this->respond($response, 404);
+        } else {
+            $data = $this->request->getRawInput();
+            $model->update($id, $data);
+
+            $response = [
+                'status' => 200,
+                'error' => null, 'message' =>
+                "Data Anda berhasil dibaharukan"
+            ];
+            return $this->respond($response);
+        }   
     }
 
     /**
