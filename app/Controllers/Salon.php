@@ -84,9 +84,9 @@ class Salon extends ResourceController
         $validation = \Config\Services::validation();
 
         $valid = $this->validate([
-            'id' => [
-                'rules' => 'is_unique[salon.id]',
-                'label' => 'ID Salon',
+            'nama_salon' => [
+                'rules' => 'is_unique[salon.nama_salon]',
+                'label' => 'Nama Salon',
                 'errors' => [
                     'is_uniqe' => "{field} sudah ada"
                 ]
@@ -140,12 +140,36 @@ class Salon extends ResourceController
             'nama_salon' => $this->request->getVar("nama_salon"),
             'deskripsi' => $this->request->getVar("deskripsi"),
         ];
-        $data = $this->request->getRawInput();
-        $model->update($id, $data);
-        $response = [
-            'status' => 200, 'error' => null, 'message' => "Data Anda dengan NIM $id berhasil dibaharukan"
-        ];
-        return $this->respond($response);
+
+        $validation = \Config\Services::validation();
+
+        $valid = $this->validate([
+            'nama_salon' => [
+                'rules' => 'is_unique[salon.nama_salon]',
+                'label' => 'Nama Salon',
+                'errors' => [
+                    'is_uniqe' => "{field} sudah ada"
+                ]
+            ]
+        ]);
+
+        if (!$valid) {
+            $response = [
+                'status' => 404,
+                'error' => true,
+                'message' => $validation->getError("username"),
+            ];
+
+            return $this->respond($response, 404);
+        } else {
+            $data = $this->request->getRawInput();
+            $model->update($id, $data);
+            $response = [
+                'status' => 200, 'error' => null, 'message' => "Data Anda dengan NIM $id berhasil dibaharukan"
+            ];
+            return $this->respond($response);
+        }
+
     }
 
     /**
