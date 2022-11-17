@@ -97,7 +97,7 @@ class Salon extends ResourceController
             $response = [
                 'status' => 404,
                 'error' => true,
-                'message' => $validation->getError("id"),
+                'message' => $validation->getError("nama_salon"),
             ];
 
             return $this->respond($response, 404);
@@ -157,7 +157,7 @@ class Salon extends ResourceController
             $response = [
                 'status' => 404,
                 'error' => true,
-                'message' => $validation->getError("username"),
+                'message' => $validation->getError("nama_salon"),
             ];
 
             return $this->respond($response, 404);
